@@ -1,0 +1,20 @@
+{
+  "name": "cs-ripple-wallet",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint lib test",
+    "test": "mocha --reporter spec"
+  },
+  "author": "Nikita Verkhovin <vernik91@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.16.2",
+    "ripple-lib": "^1.0.0-beta.0"
+  },
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "mocha": "^5.1.1"
+  }
+}
