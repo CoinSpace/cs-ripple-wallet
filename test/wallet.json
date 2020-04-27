@@ -2,7 +2,6 @@
   "networkName": "ripple",
   "balance": 0,
   "fee": "0.000012",
-  "historyTxs": [],
   "account": {
     "secret": "shumCfCZDgFo9AvYXeCvvwJt1kor6",
     "address": "rEarSr7szoUCV9m2h6hXayTQaAwmyerGcs"
