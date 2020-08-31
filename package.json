@@ -1,6 +1,7 @@
 {
   "name": "cs-ripple-wallet",
   "version": "1.0.13",
+  "repository": "https://github.com/CoinSpace/cs-ripple-wallet",
   "description": "",
   "main": "index.js",
   "scripts": {
