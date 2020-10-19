@@ -1,5 +1,5 @@
 {
-  "name": "cs-ripple-wallet",
+  "name": "@coinspace/cs-ripple-wallet",
   "version": "1.2.0",
   "repository": "https://github.com/CoinSpace/cs-ripple-wallet",
   "description": "",
