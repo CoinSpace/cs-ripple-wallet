@@ -1,119 +1,119 @@
 'use strict';
 
-var assert = require('assert');
-var Wallet = require('../');
-var fixtures = require('./wallet');
+const assert = require('assert');
+const Wallet = require('../');
+const fixtures = require('./wallet');
 // eslint-disable-next-line max-len
-var RANDOM_SEED = '2b48a48a752f6c49772bf97205660411cd2163fe6ce2de19537e9c94d3648c85c0d7f405660c20253115aaf1799b1c41cdd62b4cfbb6845bc9475495fc64b874';
-var RANDOM_SEED_PUB_KEY = 'rpJEDJy8pYSEmuKnqwQQEu2uGYcK5QRTjF';
+const RANDOM_SEED = '2b48a48a752f6c49772bf97205660411cd2163fe6ce2de19537e9c94d3648c85c0d7f405660c20253115aaf1799b1c41cdd62b4cfbb6845bc9475495fc64b874';
+const RANDOM_SEED_PUB_KEY = 'rpJEDJy8pYSEmuKnqwQQEu2uGYcK5QRTjF';
 
-describe('Ripple Wallet', function() {
-  var readOnlyWallet;
+describe('Ripple Wallet', () => {
+  let readOnlyWallet;
 
-  before(function() {
+  before(() => {
     readOnlyWallet = Wallet.deserialize(JSON.stringify(fixtures));
   });
 
-  it('should have more tests', function() {
-    assert.equal('hi', 'hi');
+  it('should have more tests', () => {
+    assert.strictEqual('hi', 'hi');
   });
 
-  describe('constructor', function() {
-    it('with seed', function() {
-      var wallet = new Wallet({
+  describe('constructor', () => {
+    it('with seed', () => {
+      const wallet = new Wallet({
         networkName: 'ripple',
-        seed: RANDOM_SEED
+        seed: RANDOM_SEED,
       });
       assert.ok(wallet);
-      assert.equal(wallet.isLocked, false);
+      assert.strictEqual(wallet.isLocked, false);
     });
 
-    it('with publicKey', function() {
-      var wallet = new Wallet({
+    it('with publicKey', () => {
+      const wallet = new Wallet({
         networkName: 'ripple',
-        publicKey: readOnlyWallet.account.address
+        publicKey: readOnlyWallet.account.address,
       });
-      assert.equal(wallet.addressString, readOnlyWallet.addressString);
-      assert.equal(wallet.isLocked, true);
+      assert.strictEqual(wallet.addressString, readOnlyWallet.addressString);
+      assert.strictEqual(wallet.isLocked, true);
       assert.ok(wallet);
     });
   });
 
-  describe('lock', function() {
-    it('works', function() {
-      var wallet = new Wallet({
+  describe('lock', () => {
+    it('works', () => {
+      const wallet = new Wallet({
         networkName: 'ripple',
-        seed: RANDOM_SEED
+        seed: RANDOM_SEED,
       });
-      assert.equal(wallet.isLocked, false);
+      assert.strictEqual(wallet.isLocked, false);
       wallet.lock();
-      assert.equal(wallet.account.secret, null);
-      assert.equal(wallet.isLocked, true);
+      assert.strictEqual(wallet.account.secret, null);
+      assert.strictEqual(wallet.isLocked, true);
     });
   });
 
-  describe('unlock', function() {
-    it('works', function() {
-      var wallet = new Wallet({
+  describe('unlock', () => {
+    it('works', () => {
+      const wallet = new Wallet({
         networkName: 'ripple',
-        publicKey: RANDOM_SEED_PUB_KEY
+        publicKey: RANDOM_SEED_PUB_KEY,
       });
-      assert.equal(wallet.isLocked, true);
+      assert.strictEqual(wallet.isLocked, true);
       wallet.unlock(RANDOM_SEED);
       assert.ok(wallet.account.secret);
-      assert.equal(wallet.isLocked, false);
+      assert.strictEqual(wallet.isLocked, false);
     });
   });
 
-  describe('publicKey', function() {
-    it('works', function() {
-      var wallet = new Wallet({
+  describe('publicKey', () => {
+    it('works', () => {
+      const wallet = new Wallet({
         networkName: 'ripple',
-        seed: RANDOM_SEED
+        seed: RANDOM_SEED,
       });
-      var publicKey = wallet.publicKey();
+      const publicKey = wallet.publicKey();
       assert.ok(publicKey);
     });
 
-    it('key is valid', function() {
-      var wallet = new Wallet({
+    it('key is valid', () => {
+      const wallet = new Wallet({
         networkName: 'ripple',
-        seed: RANDOM_SEED
+        seed: RANDOM_SEED,
       });
-      var publicKey = wallet.publicKey();
-      var secondWalet = new Wallet({
+      const publicKey = wallet.publicKey();
+      const secondWalet = new Wallet({
         networkName: 'ripple',
-        publicKey: publicKey
+        publicKey,
       });
       secondWalet.unlock(RANDOM_SEED);
-      assert.equal(wallet.account.secret, secondWalet.account.secret);
-      assert.equal(wallet.addressString, secondWalet.addressString);
+      assert.strictEqual(wallet.account.secret, secondWalet.account.secret);
+      assert.strictEqual(wallet.addressString, secondWalet.addressString);
     });
   });
 
-  describe('serialization & deserialization', function() {
-    it('works', function() {
-      assert.deepEqual(fixtures, JSON.parse(readOnlyWallet.serialize()));
+  describe('serialization & deserialization', () => {
+    it('works', () => {
+      assert.deepStrictEqual(fixtures, JSON.parse(readOnlyWallet.serialize()));
     });
   });
 
-  describe('createPrivateKey', function() {
-    it('works', function() {
-      var privateKey = readOnlyWallet.createPrivateKey(
+  describe('createPrivateKey', () => {
+    it('works', () => {
+      const privateKey = readOnlyWallet.createPrivateKey(
         'ssx7eWhbSz2eSRRqbvR7cUnQ7nC2a'
       );
-      assert.equal(privateKey, 'ssx7eWhbSz2eSRRqbvR7cUnQ7nC2a');
+      assert.strictEqual(privateKey, 'ssx7eWhbSz2eSRRqbvR7cUnQ7nC2a');
     });
 
-    it('errors on invalid private key', function(){
-      assert.throws(function() { readOnlyWallet.createPrivateKey('123'); });
+    it('errors on invalid private key', ()=> {
+      assert.throws(() => { readOnlyWallet.createPrivateKey('123'); });
     });
   });
 
-  describe('exportPrivateKeys', function() {
-    it('works', function() {
-      var csv = readOnlyWallet.exportPrivateKeys();
-      assert.equal(typeof csv, 'string');
+  describe('exportPrivateKeys', () => {
+    it('works', () => {
+      const csv = readOnlyWallet.exportPrivateKeys();
+      assert.strictEqual(typeof csv, 'string');
       assert(csv, 'address,privatekey\n' + readOnlyWallet.account.address + ',' + readOnlyWallet.account.secret);
     });
   });
