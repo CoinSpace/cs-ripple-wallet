@@ -2,14 +2,14 @@
   "name": "@coinspace/cs-ripple-wallet",
   "version": "1.4.1",
   "repository": "https://github.com/CoinSpace/cs-ripple-wallet",
-  "description": "",
+  "description": "Ripple Wallet for Coin app",
+  "author": "Coin Crypto Wallet <support@coin.space> (https://coin.space/)",
+  "license": "MIT",
   "main": "index.js",
   "scripts": {
     "lint": "eslint lib test index.js",
     "test": "mocha test --reporter spec"
   },
-  "author": "Nikita Verkhovin <vernik91@gmail.com>",
-  "license": "MIT",
   "dependencies": {
     "axios": "^0.19.2",
     "axios-retry": "^3.1.9",
