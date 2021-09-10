@@ -1,5 +1,8 @@
 {
-  "networkName": "ripple",
+  "crypto": {
+    "platform": "ripple",
+    "decimals": 6
+  },
   "balance": 0,
   "fee": "0.000012",
   "account": {
