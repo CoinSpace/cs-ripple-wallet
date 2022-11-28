@@ -1,3 +1,8 @@
-'use strict';
-
-module.exports = require('./lib/wallet');
+export {
+  default,
+  InvalidTagError,
+  DestinationTagNeededError,
+  InvalidInvoiceIDError,
+  InactiveAccountError,
+  InvalidSecretError,
+} from './lib/wallet.js';
