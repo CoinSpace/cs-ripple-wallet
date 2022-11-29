@@ -1,3 +1,4 @@
+import { Amount } from 'cs-common';
 import Wallet from '../index.js';
 import assert from 'assert/strict';
 import sinon from 'sinon';
@@ -7,6 +8,7 @@ const RANDOM_SEED = Buffer.from('2b48a48a752f6c49772bf97205660411cd2163fe6ce2de1
 const RANDOM_SEED_PUB_KEY = 'rpJEDJy8pYSEmuKnqwQQEu2uGYcK5QRTjF';
 const RANDOM_ADDRESS = 'rpJEDJy8pYSEmuKnqwQQEu2uGYcK5QRTjF';
 const RANDOM_SECRET = 'ssJGzspgYMoCehAaJLX2a6xo4mCjX';
+const SECOND_ADDRESS = 'rEarSr7szoUCV9m2h6hXayTQaAwmyerGcs';
 const xrpAtRipple = {
   _id: 'xrp@ripple',
   asset: 'xrp',
@@ -59,13 +61,12 @@ describe('Ripple Wallet', () => {
       const wallet = new Wallet({
         ...defaultOptions,
       });
-      await assert.rejects(
-        async () => {
-          await wallet.create();
-        }, {
-          name: 'TypeError',
-          message: 'seed must be an instance of Buffer, undefined provided',
-        });
+      await assert.rejects(async () => {
+        await wallet.create();
+      }, {
+        name: 'TypeError',
+        message: 'seed must be an instance of Buffer, undefined provided',
+      });
     });
   });
 
@@ -92,13 +93,12 @@ describe('Ripple Wallet', () => {
       const wallet = new Wallet({
         ...defaultOptions,
       });
-      await assert.rejects(
-        async () => {
-          await wallet.open();
-        }, {
-          name: 'TypeError',
-          message: 'publicKey must be an instance of Object with data property',
-        });
+      await assert.rejects(async () => {
+        await wallet.open();
+      }, {
+        name: 'TypeError',
+        message: 'publicKey must be an instance of Object with data property',
+      });
     });
   });
 
@@ -225,15 +225,12 @@ describe('Ripple Wallet', () => {
         ...defaultOptions,
       });
       await wallet.open({ data: RANDOM_SEED_PUB_KEY });
-      await assert.rejects(
-        async () => {
-          await wallet.estimateImport({ secret: '123' });
-        },
-        {
-          name: 'InvalidSecretError',
-          message: 'Invalid Secret',
-        }
-      );
+      await assert.rejects(async () => {
+        await wallet.estimateImport({ secret: '123' });
+      }, {
+        name: 'InvalidSecretError',
+        message: 'Invalid Secret',
+      });
     });
 
     it('throw error on own private key', async () => {
@@ -241,15 +238,526 @@ describe('Ripple Wallet', () => {
         ...defaultOptions,
       });
       await wallet.open({ data: RANDOM_SEED_PUB_KEY });
-      await assert.rejects(
-        async () => {
-          await wallet.estimateImport({ secret: RANDOM_SECRET });
-        },
-        {
-          name: 'InvalidSecretError',
-          message: 'Private key equal wallet private key',
-        }
-      );
+      await assert.rejects(async () => {
+        await wallet.estimateImport({ secret: RANDOM_SECRET });
+      },
+      {
+        name: 'InvalidSecretError',
+        message: 'Private key equal wallet private key',
+      });
+    });
+  });
+
+  describe('estimateMaxAmount', () => {
+    it('should correct estimate max amount', async () => {
+      sinon.stub(defaultOptions.account, 'request')
+        .withArgs({
+          seed: 'device',
+          method: 'GET',
+          url: 'api/v1/account/rpJEDJy8pYSEmuKnqwQQEu2uGYcK5QRTjF',
+          baseURL: 'node',
+        }).resolves({
+          balance: 12.345,
+          sequence: 1,
+          isActive: true,
+        }).withArgs({
+          seed: 'device',
+          method: 'GET',
+          url: 'api/v1/fee',
+          baseURL: 'node',
+        }).resolves({
+          fee: 0.000012,
+        });
+      const wallet = new Wallet({
+        ...defaultOptions,
+      });
+      await wallet.open({ data: RANDOM_SEED_PUB_KEY });
+      await wallet.load();
+      const maxAmount = await wallet.estimateMaxAmount({ address: SECOND_ADDRESS });
+      // 2345000n - 12n
+      assert.equal(maxAmount.value, 2344988n);
+    });
+
+    it('should estimate max amount to be 0', async () => {
+      sinon.stub(defaultOptions.account, 'request')
+        .withArgs({
+          seed: 'device',
+          method: 'GET',
+          url: 'api/v1/account/rpJEDJy8pYSEmuKnqwQQEu2uGYcK5QRTjF',
+          baseURL: 'node',
+        }).resolves({
+          balance: 10,
+          sequence: 1,
+          isActive: true,
+        }).withArgs({
+          seed: 'device',
+          method: 'GET',
+          url: 'api/v1/fee',
+          baseURL: 'node',
+        }).resolves({
+          fee: 0.000012,
+        });
+      const wallet = new Wallet({
+        ...defaultOptions,
+      });
+      await wallet.open({ data: RANDOM_SEED_PUB_KEY });
+      await wallet.load();
+      const maxAmount = await wallet.estimateMaxAmount({ address: SECOND_ADDRESS });
+      assert.equal(maxAmount.value, 0n);
+    });
+  });
+
+  describe('estimateTransactionFee', () => {
+    it('should estimate transaction fee', async () => {
+      sinon.stub(defaultOptions.account, 'request')
+        .withArgs({
+          seed: 'device',
+          method: 'GET',
+          url: 'api/v1/account/rpJEDJy8pYSEmuKnqwQQEu2uGYcK5QRTjF',
+          baseURL: 'node',
+        }).resolves({
+          balance: 10,
+          sequence: 1,
+          isActive: true,
+        }).withArgs({
+          seed: 'device',
+          method: 'GET',
+          url: 'api/v1/fee',
+          baseURL: 'node',
+        }).resolves({
+          fee: 0.000012,
+        });
+      const wallet = new Wallet({
+        ...defaultOptions,
+      });
+      await wallet.open({ data: RANDOM_SEED_PUB_KEY });
+      await wallet.load();
+      const fee = await wallet.estimateTransactionFee({
+        address: SECOND_ADDRESS,
+        amount: new Amount(1n, wallet.crypto.decimals),
+      });
+      assert.equal(fee.value, 12n);
+    });
+  });
+
+  describe('validators', () => {
+    describe('validateAddress', () => {
+      let wallet;
+      beforeEach(async () => {
+        sinon.stub(defaultOptions.account, 'request')
+          .withArgs({
+            seed: 'device',
+            method: 'GET',
+            url: 'api/v1/account/rpJEDJy8pYSEmuKnqwQQEu2uGYcK5QRTjF',
+            baseURL: 'node',
+          }).resolves({
+            balance: 12.345,
+            sequence: 1,
+            isActive: true,
+          });
+        wallet = new Wallet({
+          ...defaultOptions,
+        });
+        await wallet.open({ data: RANDOM_SEED_PUB_KEY });
+        await wallet.load();
+      });
+
+      it('valid address', async () => {
+        assert.ok(await wallet.validateAddress({ address: SECOND_ADDRESS }));
+      });
+
+      it('invalid address', async () => {
+        await assert.rejects(async () => {
+          await wallet.validateAddress({ address: '123' });
+        }, {
+          name: 'InvalidAddressError',
+          message: 'Invalid address "123"',
+        });
+      });
+
+      it('own address', async () => {
+        await assert.rejects(async () => {
+          await wallet.validateAddress({ address: RANDOM_ADDRESS });
+        }, {
+          name: 'DestinationEqualsSourceError',
+          message: 'Destination address equals source address',
+        });
+      });
+    });
+
+    describe('validateAmount', () => {
+      it('should be valid amount', async () => {
+        sinon.stub(defaultOptions.account, 'request')
+          .withArgs({
+            seed: 'device',
+            method: 'GET',
+            url: 'api/v1/account/rpJEDJy8pYSEmuKnqwQQEu2uGYcK5QRTjF',
+            baseURL: 'node',
+          }).resolves({
+            balance: 20,
+            sequence: 1,
+            isActive: true,
+          }).withArgs({
+            seed: 'device',
+            method: 'GET',
+            url: `api/v1/account/${SECOND_ADDRESS}`,
+            baseURL: 'node',
+          }).resolves({
+            balance: 10,
+            sequence: 1,
+            isActive: true,
+          })
+          .withArgs({
+            seed: 'device',
+            method: 'GET',
+            url: 'api/v1/fee',
+            baseURL: 'node',
+          }).resolves({
+            fee: 0.000012,
+          });
+        const wallet = new Wallet({
+          ...defaultOptions,
+        });
+        await wallet.open({ data: RANDOM_SEED_PUB_KEY });
+        await wallet.load();
+
+        const valid = await wallet.validateAmount({
+          address: SECOND_ADDRESS,
+          amount: new Amount(5_000000n, wallet.crypto.decimals),
+        });
+        assert.ok(valid);
+      });
+
+      it('throw on inactive account', async () => {
+        sinon.stub(defaultOptions.account, 'request')
+          .withArgs({
+            seed: 'device',
+            method: 'GET',
+            url: 'api/v1/account/rpJEDJy8pYSEmuKnqwQQEu2uGYcK5QRTjF',
+            baseURL: 'node',
+          }).resolves({
+            balance: 0,
+            sequence: 1,
+            isActive: false,
+          });
+        const wallet = new Wallet({
+          ...defaultOptions,
+        });
+        await wallet.open({ data: RANDOM_SEED_PUB_KEY });
+        await wallet.load();
+
+        await assert.rejects(async () => {
+          await wallet.validateAmount({
+            address: SECOND_ADDRESS,
+            amount: new Amount(123n, wallet.crypto.decimals),
+          });
+        }, {
+          name: 'InactiveAccountError',
+          message: 'Inactive Account',
+        });
+      });
+
+      it('throw on small amount', async () => {
+        sinon.stub(defaultOptions.account, 'request')
+          .withArgs({
+            seed: 'device',
+            method: 'GET',
+            url: 'api/v1/account/rpJEDJy8pYSEmuKnqwQQEu2uGYcK5QRTjF',
+            baseURL: 'node',
+          }).resolves({
+            balance: 12.345,
+            sequence: 1,
+            isActive: true,
+          });
+        const wallet = new Wallet({
+          ...defaultOptions,
+        });
+        await wallet.open({ data: RANDOM_SEED_PUB_KEY });
+        await wallet.load();
+
+        await assert.rejects(async () => {
+          await wallet.validateAmount({
+            address: SECOND_ADDRESS,
+            amount: new Amount(0n, wallet.crypto.decimals),
+          });
+        }, {
+          name: 'SmallAmountError',
+          message: 'Small amount',
+          amount: new Amount(1n, wallet.crypto.decimals),
+        });
+      });
+
+      it('throw on big amount', async () => {
+        sinon.stub(defaultOptions.account, 'request')
+          .withArgs({
+            seed: 'device',
+            method: 'GET',
+            url: 'api/v1/account/rpJEDJy8pYSEmuKnqwQQEu2uGYcK5QRTjF',
+            baseURL: 'node',
+          }).resolves({
+            balance: 12.345,
+            sequence: 1,
+            isActive: true,
+          }).withArgs({
+            seed: 'device',
+            method: 'GET',
+            url: 'api/v1/fee',
+            baseURL: 'node',
+          }).resolves({
+            fee: 0.000012,
+          });
+        const wallet = new Wallet({
+          ...defaultOptions,
+        });
+        await wallet.open({ data: RANDOM_SEED_PUB_KEY });
+        await wallet.load();
+
+        await assert.rejects(async () => {
+          await wallet.validateAmount({
+            address: SECOND_ADDRESS,
+            amount: new Amount(200_000000n, wallet.crypto.decimals),
+          });
+        }, {
+          name: 'BigAmountError',
+          message: 'Big amount',
+          amount: new Amount(2344988n, wallet.crypto.decimals),
+        });
+      });
+
+      it('throw on amount less then min reserve', async () => {
+        sinon.stub(defaultOptions.account, 'request')
+          .withArgs({
+            seed: 'device',
+            method: 'GET',
+            url: 'api/v1/account/rpJEDJy8pYSEmuKnqwQQEu2uGYcK5QRTjF',
+            baseURL: 'node',
+          }).resolves({
+            balance: 12.345,
+            sequence: 1,
+            isActive: true,
+          })
+          .withArgs({
+            seed: 'device',
+            method: 'GET',
+            url: `api/v1/account/${SECOND_ADDRESS}`,
+            baseURL: 'node',
+          }).resolves({
+            balance: 0,
+            sequence: 1,
+            isActive: false,
+          })
+          .withArgs({
+            seed: 'device',
+            method: 'GET',
+            url: 'api/v1/fee',
+            baseURL: 'node',
+          }).resolves({
+            fee: 0.000012,
+          });
+        const wallet = new Wallet({
+          ...defaultOptions,
+        });
+        await wallet.open({ data: RANDOM_SEED_PUB_KEY });
+        await wallet.load();
+
+        await assert.rejects(async () => {
+          await wallet.validateAmount({
+            address: SECOND_ADDRESS,
+            amount: new Amount(2_000000n, wallet.crypto.decimals),
+          });
+        }, {
+          name: 'MinimumReserveDestinationError',
+          message: 'Less than minimum reserve on destination address',
+          amount: new Amount(10000000n, wallet.crypto.decimals),
+        });
+      });
+    });
+
+    describe('validateMeta', () => {
+      let wallet;
+      beforeEach(async () => {
+        sinon.stub(defaultOptions.account, 'request')
+          .withArgs({
+            seed: 'device',
+            method: 'GET',
+            url: 'api/v1/account/rpJEDJy8pYSEmuKnqwQQEu2uGYcK5QRTjF',
+            baseURL: 'node',
+          }).resolves({
+            balance: 12.345,
+            sequence: 1,
+            isActive: true,
+          });
+        wallet = new Wallet({
+          ...defaultOptions,
+        });
+        await wallet.open({ data: RANDOM_SEED_PUB_KEY });
+        await wallet.load();
+      });
+
+      it('empty meta is valid', async () => {
+        assert.ok(await wallet.validateMeta({
+          address: SECOND_ADDRESS,
+        }));
+      });
+
+      it('valid tag', async () => {
+        assert.ok(await wallet.validateMeta({
+          address: SECOND_ADDRESS,
+          tag: 12345,
+        }));
+      });
+
+      it('valid invoiceID', async () => {
+        assert.ok(await wallet.validateMeta({
+          address: SECOND_ADDRESS,
+          invoiceID: '42'.repeat(32),
+        }));
+      });
+
+      it('should throw invalid tag', async () => {
+        await assert.rejects(async () => {
+          await wallet.validateMeta({
+            address: SECOND_ADDRESS,
+            tag: 4294967296,
+          });
+        }, {
+          name: 'InvalidTagError',
+          message: 'Invalid Tag: "4294967296"',
+        });
+      });
+
+      it('should throw invoiceID', async () => {
+        await assert.rejects(async () => {
+          await wallet.validateMeta({
+            address: SECOND_ADDRESS,
+            invoiceID: 'foo',
+          });
+        }, {
+          name: 'InvalidInvoiceIDError',
+          message: 'Invalid InvoiceID: "foo"',
+        });
+      });
+    });
+  });
+
+  describe('createTransaction', () => {
+    it('should create valid transaction', async () => {
+      sinon.stub(defaultOptions.account, 'request')
+        .withArgs({
+          seed: 'device',
+          method: 'GET',
+          url: 'api/v1/account/rpJEDJy8pYSEmuKnqwQQEu2uGYcK5QRTjF',
+          baseURL: 'node',
+        }).resolves({
+          balance: 20,
+          sequence: 1,
+          isActive: true,
+        })
+        .withArgs({
+          seed: 'device',
+          method: 'GET',
+          url: `api/v1/account/${SECOND_ADDRESS}`,
+          baseURL: 'node',
+        }).resolves({
+          balance: 10,
+          sequence: 1,
+          isActive: true,
+        })
+        .withArgs({
+          seed: 'device',
+          method: 'GET',
+          url: 'api/v1/fee',
+          baseURL: 'node',
+        }).resolves({
+          fee: 0.000012,
+        })
+        .withArgs({
+          seed: 'device',
+          method: 'GET',
+          url: 'api/v1/ledgerVersion',
+          baseURL: 'node',
+        }).resolves({
+          maxLedgerVersion: 1,
+        }).withArgs({
+          seed: 'device',
+          method: 'POST',
+          url: 'api/v1/tx/send',
+          data: sinon.match.any,
+          baseURL: 'node',
+        }).resolves({
+          txId: '123456',
+        });
+      const wallet = new Wallet({
+        ...defaultOptions,
+      });
+      await wallet.open({ data: RANDOM_SEED_PUB_KEY });
+      await wallet.load();
+
+      await wallet.createTransaction({
+        address: SECOND_ADDRESS,
+        amount: new Amount(5_000000, wallet.crypto.decimals),
+      }, RANDOM_SEED);
+      assert.equal(wallet.balance.value, 14_999988n);
+    });
+  });
+
+  describe('createImport', () => {
+    it('should create import transaction', async () => {
+      sinon.stub(defaultOptions.account, 'request')
+        .withArgs({
+          seed: 'device',
+          method: 'GET',
+          url: 'api/v1/account/rpJEDJy8pYSEmuKnqwQQEu2uGYcK5QRTjF',
+          baseURL: 'node',
+        }).resolves({
+          balance: 20,
+          sequence: 1,
+          isActive: true,
+        })
+        .withArgs({
+          seed: 'device',
+          method: 'GET',
+          url: 'api/v1/account/rfUJGPU24ZyxiyT9bPE4kaG3EhBviBjb63',
+          baseURL: 'node',
+        }).resolves({
+          balance: 30,
+          sequence: 1,
+          isActive: true,
+        })
+        .withArgs({
+          seed: 'device',
+          method: 'GET',
+          url: 'api/v1/fee',
+          baseURL: 'node',
+        }).resolves({
+          fee: 0.000012,
+        })
+        .withArgs({
+          seed: 'device',
+          method: 'GET',
+          url: 'api/v1/ledgerVersion',
+          baseURL: 'node',
+        }).resolves({
+          maxLedgerVersion: 1,
+        }).withArgs({
+          seed: 'device',
+          method: 'POST',
+          url: 'api/v1/tx/send',
+          data: sinon.match.any,
+          baseURL: 'node',
+        }).resolves({
+          txId: '123456',
+        });
+      const wallet = new Wallet({
+        ...defaultOptions,
+      });
+      await wallet.open({ data: RANDOM_SEED_PUB_KEY });
+      await wallet.load();
+
+      await wallet.createImport({
+        secret: 'ssx7eWhbSz2eSRRqbvR7cUnQ7nC2a',
+      });
+      assert.equal(wallet.balance.value, 39_999988n);
     });
   });
 });
