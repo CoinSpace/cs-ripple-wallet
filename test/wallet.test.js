@@ -8,7 +8,8 @@ const RANDOM_SEED = Buffer.from('2b48a48a752f6c49772bf97205660411cd2163fe6ce2de1
 const RANDOM_SEED_PUB_KEY = 'rpJEDJy8pYSEmuKnqwQQEu2uGYcK5QRTjF';
 const RANDOM_ADDRESS = 'rpJEDJy8pYSEmuKnqwQQEu2uGYcK5QRTjF';
 const RANDOM_SECRET = 'ssJGzspgYMoCehAaJLX2a6xo4mCjX';
-const SECOND_ADDRESS = 'rEarSr7szoUCV9m2h6hXayTQaAwmyerGcs';
+const SECOND_SECRET = 'ssx7eWhbSz2eSRRqbvR7cUnQ7nC2a';
+const SECOND_ADDRESS = 'rfUJGPU24ZyxiyT9bPE4kaG3EhBviBjb63';
 const xrpAtRipple = {
   _id: 'xrp@ripple',
   asset: 'xrp',
@@ -32,10 +33,6 @@ const defaultOptions = {
 describe('Ripple Wallet', () => {
   afterEach(() => {
     sinon.restore();
-  });
-
-  it('should have more tests', () => {
-    assert.equal('hi', 'hi');
   });
 
   describe('constructor', () => {
@@ -120,7 +117,7 @@ describe('Ripple Wallet', () => {
         .withArgs({
           seed: 'device',
           method: 'GET',
-          url: 'api/v1/account/rpJEDJy8pYSEmuKnqwQQEu2uGYcK5QRTjF',
+          url: `api/v1/account/${RANDOM_ADDRESS}`,
           baseURL: 'node',
         }).resolves({
           balance: 12.345,
@@ -185,7 +182,7 @@ describe('Ripple Wallet', () => {
         .withArgs({
           seed: 'device',
           method: 'GET',
-          url: 'api/v1/account/rpJEDJy8pYSEmuKnqwQQEu2uGYcK5QRTjF',
+          url: `api/v1/account/${RANDOM_ADDRESS}`,
           baseURL: 'node',
         }).resolves({
           balance: 12.345,
@@ -195,7 +192,7 @@ describe('Ripple Wallet', () => {
         .withArgs({
           seed: 'device',
           method: 'GET',
-          url: 'api/v1/account/rfUJGPU24ZyxiyT9bPE4kaG3EhBviBjb63',
+          url: `api/v1/account/${SECOND_ADDRESS}`,
           baseURL: 'node',
         }).resolves({
           balance: 100500,
@@ -215,8 +212,8 @@ describe('Ripple Wallet', () => {
       });
       await wallet.open({ data: RANDOM_SEED_PUB_KEY });
       await wallet.load();
-      const estimation = await wallet.estimateImport({ secret: 'ssx7eWhbSz2eSRRqbvR7cUnQ7nC2a' });
-      assert.equal(estimation.address, 'rfUJGPU24ZyxiyT9bPE4kaG3EhBviBjb63');
+      const estimation = await wallet.estimateImport({ secret: SECOND_SECRET });
+      assert.equal(estimation.address, SECOND_ADDRESS);
       assert.equal(estimation.amount.value, 100489999988n);
     });
 
@@ -254,7 +251,7 @@ describe('Ripple Wallet', () => {
         .withArgs({
           seed: 'device',
           method: 'GET',
-          url: 'api/v1/account/rpJEDJy8pYSEmuKnqwQQEu2uGYcK5QRTjF',
+          url: `api/v1/account/${RANDOM_ADDRESS}`,
           baseURL: 'node',
         }).resolves({
           balance: 12.345,
@@ -283,7 +280,7 @@ describe('Ripple Wallet', () => {
         .withArgs({
           seed: 'device',
           method: 'GET',
-          url: 'api/v1/account/rpJEDJy8pYSEmuKnqwQQEu2uGYcK5QRTjF',
+          url: `api/v1/account/${RANDOM_ADDRESS}`,
           baseURL: 'node',
         }).resolves({
           balance: 10,
@@ -313,7 +310,7 @@ describe('Ripple Wallet', () => {
         .withArgs({
           seed: 'device',
           method: 'GET',
-          url: 'api/v1/account/rpJEDJy8pYSEmuKnqwQQEu2uGYcK5QRTjF',
+          url: `api/v1/account/${RANDOM_ADDRESS}`,
           baseURL: 'node',
         }).resolves({
           balance: 10,
@@ -348,7 +345,7 @@ describe('Ripple Wallet', () => {
           .withArgs({
             seed: 'device',
             method: 'GET',
-            url: 'api/v1/account/rpJEDJy8pYSEmuKnqwQQEu2uGYcK5QRTjF',
+            url: `api/v1/account/${RANDOM_ADDRESS}`,
             baseURL: 'node',
           }).resolves({
             balance: 12.345,
@@ -391,7 +388,7 @@ describe('Ripple Wallet', () => {
           .withArgs({
             seed: 'device',
             method: 'GET',
-            url: 'api/v1/account/rpJEDJy8pYSEmuKnqwQQEu2uGYcK5QRTjF',
+            url: `api/v1/account/${RANDOM_ADDRESS}`,
             baseURL: 'node',
           }).resolves({
             balance: 20,
@@ -433,7 +430,7 @@ describe('Ripple Wallet', () => {
           .withArgs({
             seed: 'device',
             method: 'GET',
-            url: 'api/v1/account/rpJEDJy8pYSEmuKnqwQQEu2uGYcK5QRTjF',
+            url: `api/v1/account/${RANDOM_ADDRESS}`,
             baseURL: 'node',
           }).resolves({
             balance: 0,
@@ -462,7 +459,7 @@ describe('Ripple Wallet', () => {
           .withArgs({
             seed: 'device',
             method: 'GET',
-            url: 'api/v1/account/rpJEDJy8pYSEmuKnqwQQEu2uGYcK5QRTjF',
+            url: `api/v1/account/${RANDOM_ADDRESS}`,
             baseURL: 'node',
           }).resolves({
             balance: 12.345,
@@ -492,7 +489,7 @@ describe('Ripple Wallet', () => {
           .withArgs({
             seed: 'device',
             method: 'GET',
-            url: 'api/v1/account/rpJEDJy8pYSEmuKnqwQQEu2uGYcK5QRTjF',
+            url: `api/v1/account/${RANDOM_ADDRESS}`,
             baseURL: 'node',
           }).resolves({
             balance: 12.345,
@@ -529,7 +526,7 @@ describe('Ripple Wallet', () => {
           .withArgs({
             seed: 'device',
             method: 'GET',
-            url: 'api/v1/account/rpJEDJy8pYSEmuKnqwQQEu2uGYcK5QRTjF',
+            url: `api/v1/account/${RANDOM_ADDRESS}`,
             baseURL: 'node',
           }).resolves({
             balance: 12.345,
@@ -580,7 +577,7 @@ describe('Ripple Wallet', () => {
           .withArgs({
             seed: 'device',
             method: 'GET',
-            url: 'api/v1/account/rpJEDJy8pYSEmuKnqwQQEu2uGYcK5QRTjF',
+            url: `api/v1/account/${RANDOM_ADDRESS}`,
             baseURL: 'node',
           }).resolves({
             balance: 12.345,
@@ -618,11 +615,12 @@ describe('Ripple Wallet', () => {
         await assert.rejects(async () => {
           await wallet.validateMeta({
             address: SECOND_ADDRESS,
-            tag: 4294967296,
+            destinationTag: 4294967296,
           });
         }, {
-          name: 'InvalidTagError',
-          message: 'Invalid Tag: "4294967296"',
+          name: 'InvalidDestinationTagError',
+          message: 'Invalid Destination Tag: "4294967296"',
+          meta: 'destinationTag',
         });
       });
 
@@ -630,11 +628,12 @@ describe('Ripple Wallet', () => {
         await assert.rejects(async () => {
           await wallet.validateMeta({
             address: SECOND_ADDRESS,
-            invoiceID: 'foo',
+            invoiceId: 'foo',
           });
         }, {
           name: 'InvalidInvoiceIDError',
-          message: 'Invalid InvoiceID: "foo"',
+          message: 'Invalid invoiceId: "foo"',
+          meta: 'invoiceId',
         });
       });
     });
@@ -646,7 +645,7 @@ describe('Ripple Wallet', () => {
         .withArgs({
           seed: 'device',
           method: 'GET',
-          url: 'api/v1/account/rpJEDJy8pYSEmuKnqwQQEu2uGYcK5QRTjF',
+          url: `api/v1/account/${RANDOM_ADDRESS}`,
           baseURL: 'node',
         }).resolves({
           balance: 20,
@@ -707,7 +706,7 @@ describe('Ripple Wallet', () => {
         .withArgs({
           seed: 'device',
           method: 'GET',
-          url: 'api/v1/account/rpJEDJy8pYSEmuKnqwQQEu2uGYcK5QRTjF',
+          url: `api/v1/account/${RANDOM_ADDRESS}`,
           baseURL: 'node',
         }).resolves({
           balance: 20,
@@ -717,7 +716,7 @@ describe('Ripple Wallet', () => {
         .withArgs({
           seed: 'device',
           method: 'GET',
-          url: 'api/v1/account/rfUJGPU24ZyxiyT9bPE4kaG3EhBviBjb63',
+          url: `api/v1/account/${SECOND_ADDRESS}`,
           baseURL: 'node',
         }).resolves({
           balance: 30,
@@ -755,7 +754,7 @@ describe('Ripple Wallet', () => {
       await wallet.load();
 
       await wallet.createImport({
-        secret: 'ssx7eWhbSz2eSRRqbvR7cUnQ7nC2a',
+        secret: SECOND_SECRET,
       });
       assert.equal(wallet.balance.value, 39_999988n);
     });

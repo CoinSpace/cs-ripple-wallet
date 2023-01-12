@@ -1,8 +1,6 @@
 export {
   default,
-  InvalidTagError,
+  InvalidDestinationTagError,
   DestinationTagNeededError,
   InvalidInvoiceIDError,
-  InactiveAccountError,
-  InvalidSecretError,
 } from './lib/wallet.js';
