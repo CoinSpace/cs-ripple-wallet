@@ -591,6 +591,10 @@ describe('Ripple Wallet', () => {
         await wallet.load();
       });
 
+      it('should support meta', () => {
+        assert.ok(wallet.isMetaSupported);
+      });
+
       it('empty meta is valid', async () => {
         assert.ok(await wallet.validateMeta({
           address: SECOND_ADDRESS,
@@ -600,14 +604,18 @@ describe('Ripple Wallet', () => {
       it('valid tag', async () => {
         assert.ok(await wallet.validateMeta({
           address: SECOND_ADDRESS,
-          tag: 12345,
+          meta: {
+            destinationTag: 12345,
+          },
         }));
       });
 
-      it('valid invoiceID', async () => {
+      it('valid invoiceId', async () => {
         assert.ok(await wallet.validateMeta({
           address: SECOND_ADDRESS,
-          invoiceID: '42'.repeat(32),
+          meta: {
+            invoiceId: '42'.repeat(32),
+          },
         }));
       });
 
@@ -615,7 +623,9 @@ describe('Ripple Wallet', () => {
         await assert.rejects(async () => {
           await wallet.validateMeta({
             address: SECOND_ADDRESS,
-            destinationTag: 4294967296,
+            meta: {
+              destinationTag: 4294967296,
+            },
           });
         }, {
           name: 'InvalidDestinationTagError',
@@ -624,11 +634,13 @@ describe('Ripple Wallet', () => {
         });
       });
 
-      it('should throw invoiceID', async () => {
+      it('should throw invoiceId', async () => {
         await assert.rejects(async () => {
           await wallet.validateMeta({
             address: SECOND_ADDRESS,
-            invoiceId: 'foo',
+            meta: {
+              invoiceId: 'foo',
+            },
           });
         }, {
           name: 'InvalidInvoiceIDError',
@@ -701,6 +713,13 @@ describe('Ripple Wallet', () => {
   });
 
   describe('createImport', () => {
+    it('should support import', () => {
+      const wallet = new Wallet({
+        ...defaultOptions,
+      });
+      assert.ok(wallet.isImportSupported);
+    });
+
     it('should create import transaction', async () => {
       sinon.stub(defaultOptions.account, 'request')
         .withArgs({
