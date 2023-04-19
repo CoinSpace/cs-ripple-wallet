@@ -13,7 +13,8 @@
   },
   "dependencies": {
     "cs-common": "file:../CoinSpaceV6/cs-common",
-    "ripple-keypairs": "^1.0.3",
+    "ripple-binary-codec": "1.4.2",
+    "ripple-keypairs": "1.1.4",
     "ripple-lib": "^1.9.4"
   },
   "devDependencies": {
