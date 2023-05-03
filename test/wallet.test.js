@@ -203,9 +203,10 @@ describe('Ripple Wallet', () => {
       });
       await wallet.open({ data: RANDOM_SEED_PUB_KEY });
       await wallet.load();
-      const estimation = await wallet.estimateImport({ secret: SECOND_SECRET });
+      const estimation = await wallet.estimateImport({ privateKey: SECOND_SECRET });
       assert.equal(estimation.address, SECOND_ADDRESS);
-      assert.equal(estimation.amount.value, 100489999988n);
+      assert.equal(estimation.amount.value, 100490000000n);
+      assert.equal(estimation.fee.value, 12n);
     });
 
     it('throw error on invalid private key', async () => {
@@ -214,7 +215,7 @@ describe('Ripple Wallet', () => {
       });
       await wallet.open({ data: RANDOM_SEED_PUB_KEY });
       await assert.rejects(async () => {
-        await wallet.estimateImport({ secret: '123' });
+        await wallet.estimateImport({ privateKey: '123' });
       }, {
         name: 'InvalidSecretError',
         message: 'Invalid Secret',
@@ -227,7 +228,7 @@ describe('Ripple Wallet', () => {
       });
       await wallet.open({ data: RANDOM_SEED_PUB_KEY });
       await assert.rejects(async () => {
-        await wallet.estimateImport({ secret: RANDOM_SECRET });
+        await wallet.estimateImport({ privateKey: RANDOM_SECRET });
       },
       {
         name: 'InvalidSecretError',
@@ -764,7 +765,7 @@ describe('Ripple Wallet', () => {
       await wallet.load();
 
       await wallet.createImport({
-        secret: SECOND_SECRET,
+        privateKey: SECOND_SECRET,
       });
       assert.equal(wallet.balance.value, 39_999988n);
     });
