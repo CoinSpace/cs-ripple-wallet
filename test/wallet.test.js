@@ -217,8 +217,8 @@ describe('Ripple Wallet', () => {
       await assert.rejects(async () => {
         await wallet.estimateImport({ privateKey: '123' });
       }, {
-        name: 'InvalidSecretError',
-        message: 'Invalid Secret',
+        name: 'InvalidPrivateKeyError',
+        message: 'Invalid private key',
       });
     });
 
@@ -231,7 +231,7 @@ describe('Ripple Wallet', () => {
         await wallet.estimateImport({ privateKey: RANDOM_SECRET });
       },
       {
-        name: 'InvalidSecretError',
+        name: 'InvalidPrivateKeyError',
         message: 'Private key equal wallet private key',
       });
     });
@@ -442,7 +442,7 @@ describe('Ripple Wallet', () => {
           });
         }, {
           name: 'InactiveAccountError',
-          message: 'Inactive Account',
+          message: 'Inactive account',
         });
       });
 
