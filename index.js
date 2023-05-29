@@ -3,4 +3,4 @@ export {
   InvalidDestinationTagError,
   DestinationTagNeededError,
   InvalidInvoiceIDError,
-} from './lib/wallet.js';
+} from './lib/RippleWallet.js';
