@@ -1,6 +1,2 @@
-export {
-  default,
-  InvalidDestinationTagError,
-  DestinationTagNeededError,
-  InvalidInvoiceIDError,
-} from './lib/RippleWallet.js';
+export { default } from './lib/RippleWallet.js';
+export * from './lib/errors.js';
