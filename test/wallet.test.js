@@ -1,5 +1,5 @@
 import { Amount } from '@coinspace/cs-common';
-import Wallet from '../index.js';
+import Wallet from '@coinspace/cs-ripple-wallet';
 import assert from 'assert/strict';
 import sinon from 'sinon';
 

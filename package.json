@@ -8,26 +8,33 @@
   "type": "module",
   "main": "index.js",
   "exports": {
-    ".": "./index.js",
+    ".": "./bundle.js",
     "./errors": "./lib/errors.js"
   },
   "scripts": {
-    "lint": "eslint lib test index.js",
+    "build": "npx rollup -c",
+    "lint": "eslint lib test polyfills index.js",
     "test": "mocha test --reporter spec"
-  },
-  "dependencies": {
-    "ripple-binary-codec": "1.4.2",
-    "ripple-keypairs": "1.1.4",
-    "ripple-lib": "^1.9.4"
   },
   "peerDependencies": {
     "@coinspace/cs-common": "^1.0.0"
   },
   "devDependencies": {
+    "@rollup/plugin-alias": "^5.0.0",
+    "@rollup/plugin-commonjs": "^25.0.2",
+    "@rollup/plugin-json": "^6.0.0",
+    "@rollup/plugin-node-resolve": "^15.1.0",
     "eslint": "^8.0.0",
     "eslint-config-coinspace": "^2.0.0",
+    "events": "^3.3.0",
     "mocha": "^10.0.0",
-    "sinon": "^15.0.0"
+    "readable-stream": "^4.4.0",
+    "ripple-binary-codec": "1.4.2",
+    "ripple-keypairs": "1.1.4",
+    "ripple-lib": "^1.9.4",
+    "rollup": "^3.25.1",
+    "sinon": "^15.0.0",
+    "url": "^0.11.1"
   },
   "eslintConfig": {
     "extends": [
