@@ -28,7 +28,7 @@
     "eslint-config-coinspace": "^2.0.0",
     "events": "^3.3.0",
     "mocha": "^10.0.0",
-    "readable-stream": "^4.4.0",
+    "readable-stream": "^3.6.2",
     "ripple-binary-codec": "1.4.2",
     "ripple-keypairs": "1.1.4",
     "ripple-lib": "^1.9.4",

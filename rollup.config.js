@@ -22,7 +22,6 @@ export default {
       entries: {
         crypto: fileURLToPath(new URL('polyfills/crypto.js', import.meta.url)),
         stream: fileURLToPath(new URL('polyfills/stream.js', import.meta.url)),
-        'readable-stream': 'readable-stream',
         // Empty
         http: fileURLToPath(new URL('polyfills/empty.js', import.meta.url)),
         https: fileURLToPath(new URL('polyfills/empty.js', import.meta.url)),
@@ -34,7 +33,10 @@ export default {
       },
     }),
     commonjs({ strictRequires: true, transformMixedEsModules: true }),
-    resolve({ preferBuiltins: false }),
+    resolve({
+      preferBuiltins: false,
+      mainFields: ['browser', 'module', 'main'],
+    }),
     json(),
   ],
 };
