@@ -17,7 +17,7 @@
     "test": "mocha test --reporter spec"
   },
   "peerDependencies": {
-    "@coinspace/cs-common": "^1.0.0"
+    "@coinspace/cs-common": "^1.0.7"
   },
   "devDependencies": {
     "@rollup/plugin-alias": "^5.0.0",
