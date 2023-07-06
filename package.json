@@ -16,11 +16,13 @@
     "lint": "eslint lib test polyfills index.js",
     "test": "mocha test --reporter spec"
   },
-  "peerDependencies": {
-    "@coinspace/cs-common": "^1.0.7",
+  "dependencies": {
     "ripple-binary-codec": "1.4.2",
     "ripple-keypairs": "1.1.4",
     "ripple-lib": "^1.9.4"
+  },
+  "peerDependencies": {
+    "@coinspace/cs-common": "^1.0.7"
   },
   "devDependencies": {
     "@rollup/plugin-alias": "^5.0.0",
