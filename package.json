@@ -8,7 +8,7 @@
   "type": "module",
   "main": "index.js",
   "exports": {
-    ".": "./bundle.js",
+    ".": "./index.js",
     "./errors": "./lib/errors.js"
   },
   "scripts": {
@@ -17,7 +17,10 @@
     "test": "mocha test --reporter spec"
   },
   "peerDependencies": {
-    "@coinspace/cs-common": "^1.0.7"
+    "@coinspace/cs-common": "^1.0.7",
+    "ripple-binary-codec": "1.4.2",
+    "ripple-keypairs": "1.1.4",
+    "ripple-lib": "^1.9.4"
   },
   "devDependencies": {
     "@rollup/plugin-alias": "^5.0.0",
@@ -29,9 +32,6 @@
     "events": "^3.3.0",
     "mocha": "^10.0.0",
     "readable-stream": "^3.6.2",
-    "ripple-binary-codec": "1.4.2",
-    "ripple-keypairs": "1.1.4",
-    "ripple-lib": "^1.9.4",
     "rollup": "^3.25.1",
     "sinon": "^15.0.0",
     "url": "^0.11.1"
