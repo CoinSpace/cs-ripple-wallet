@@ -203,9 +203,7 @@ describe('Ripple Wallet', () => {
       await wallet.open({ data: RANDOM_SEED_PUB_KEY });
       await wallet.load();
       const estimation = await wallet.estimateImport({ privateKey: SECOND_SECRET });
-      assert.equal(estimation.address, SECOND_ADDRESS);
-      assert.equal(estimation.amount.value, 100490000000n);
-      assert.equal(estimation.fee.value, 12n);
+      assert.equal(estimation.value, 100489999988n);
     });
 
     it('throw error on invalid private key', async () => {
