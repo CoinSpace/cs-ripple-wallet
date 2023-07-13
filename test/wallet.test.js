@@ -126,6 +126,18 @@ describe('Ripple Wallet', () => {
       assert.equal(wallet.balance.value, 12345000n);
       storage.verify();
     });
+
+    it('should set STATE_ERROR on error', async () => {
+      const wallet = new Wallet({
+        ...defaultOptions,
+      });
+      await wallet.open({ data: RANDOM_SEED_PUB_KEY });
+      sinon.stub(defaultOptions.account, 'request');
+      await assert.rejects(async () => {
+        await wallet.load();
+      });
+      assert.equal(wallet.state, Wallet.STATE_ERROR);
+    });
   });
 
   describe('getPublicKey', () => {

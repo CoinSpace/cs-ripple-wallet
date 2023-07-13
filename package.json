@@ -22,7 +22,7 @@
     "ripple-lib": "^1.9.4"
   },
   "peerDependencies": {
-    "@coinspace/cs-common": "^1.0.7"
+    "@coinspace/cs-common": "^1.0.13"
   },
   "devDependencies": {
     "@rollup/plugin-alias": "^5.0.0",
