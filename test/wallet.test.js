@@ -611,6 +611,15 @@ describe('Ripple Wallet', () => {
         }));
       });
 
+      it('valid tag as a string', async () => {
+        assert.ok(await wallet.validateMeta({
+          address: SECOND_ADDRESS,
+          meta: {
+            destinationTag: '12345',
+          },
+        }));
+      });
+
       it('valid invoiceId', async () => {
         assert.ok(await wallet.validateMeta({
           address: SECOND_ADDRESS,
@@ -631,6 +640,21 @@ describe('Ripple Wallet', () => {
         }, {
           name: 'InvalidDestinationTagError',
           message: 'Invalid Destination Tag: "4294967296"',
+          meta: 'destinationTag',
+        });
+      });
+
+      it('should throw invalid tag', async () => {
+        await assert.rejects(async () => {
+          await wallet.validateMeta({
+            address: SECOND_ADDRESS,
+            meta: {
+              destinationTag: 'foo',
+            },
+          });
+        }, {
+          name: 'InvalidDestinationTagError',
+          message: 'Invalid Destination Tag: "foo"',
           meta: 'destinationTag',
         });
       });
