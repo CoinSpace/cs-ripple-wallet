@@ -3,6 +3,3 @@
 .npmrc
 .nvmrc
 test
-polyfills
-
-rollup.config.js

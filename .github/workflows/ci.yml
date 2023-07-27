@@ -19,7 +19,6 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_READ_TOKEN}}
       - run: npm run lint
-      #- run: npm run build
       - run: npm run test
 
   publish:
@@ -35,7 +34,6 @@ jobs:
       - run: npm ci
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_READ_TOKEN}}
-      #- run: npm run build
       - run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
