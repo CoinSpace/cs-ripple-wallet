@@ -729,11 +729,12 @@ describe('Ripple Wallet', () => {
       await wallet.open({ data: RANDOM_SEED_PUB_KEY });
       await wallet.load();
 
-      await wallet.createTransaction({
+      const id = await wallet.createTransaction({
         address: SECOND_ADDRESS,
         amount: new Amount(5_000000, wallet.crypto.decimals),
       }, RANDOM_SEED);
       assert.equal(wallet.balance.value, 14_999988n);
+      assert.equal(id, '123456');
     });
   });
 
@@ -797,10 +798,11 @@ describe('Ripple Wallet', () => {
       await wallet.open({ data: RANDOM_SEED_PUB_KEY });
       await wallet.load();
 
-      await wallet.createImport({
+      const id = await wallet.createImport({
         privateKey: SECOND_SECRET,
       });
       assert.equal(wallet.balance.value, 39_999988n);
+      assert.equal(id, '123456');
     });
   });
 });
