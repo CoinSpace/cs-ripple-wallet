@@ -721,7 +721,7 @@ describe('Ripple Wallet', () => {
           data: sinon.match.any,
           baseURL: 'node',
         }).resolves({
-          txId: '123456',
+          hash: '123456',
         });
       const wallet = new Wallet({
         ...defaultOptions,
@@ -790,7 +790,7 @@ describe('Ripple Wallet', () => {
           data: sinon.match.any,
           baseURL: 'node',
         }).resolves({
-          txId: '123456',
+          hash: '123456',
         });
       const wallet = new Wallet({
         ...defaultOptions,
