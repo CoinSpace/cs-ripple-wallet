@@ -450,8 +450,9 @@ describe('Ripple Wallet', () => {
             amount: new Amount(123n, wallet.crypto.decimals),
           });
         }, {
-          name: 'InactiveAccountError',
-          message: 'Inactive account',
+          name: 'SmallAmountError',
+          message: 'Small amount',
+          amount: new Amount(1n, wallet.crypto.decimals),
         });
       });
 
