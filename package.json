@@ -1,6 +1,6 @@
 {
   "name": "@coinspace/cs-ripple-wallet",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "repository": "https://github.com/CoinSpace/cs-ripple-wallet",
   "description": "Ripple Wallet for Coin Wallet",
   "author": "Coin Wallet <support@coin.space> (https://coin.space/)",
