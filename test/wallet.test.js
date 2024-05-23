@@ -424,6 +424,10 @@ describe('Ripple Wallet', () => {
         assert.ok(await wallet.validateAddress({ address: SECOND_ADDRESS }));
       });
 
+      it('valid X address', async () => {
+        assert.ok(await wallet.validateAddress({ address: 'X7ojcfux3nstFhZGjJv39sAq19KRiAMmeomkmLDmyTha6wE' }));
+      });
+
       it('invalid address', async () => {
         await assert.rejects(async () => {
           await wallet.validateAddress({ address: '123' });
@@ -923,6 +927,57 @@ describe('Ripple Wallet', () => {
       assert.equal(res.hasMore, true);
       assert.equal(res.transactions.length, 5);
       assert.equal(res.cursor, '4531732008A1841C46ABA924BCF1D467CB96F5FAAEAA7CACD2D7314723F13B96');
+    });
+  });
+
+  describe('unalias', () => {
+    it('isUnaliasSupported', async () => {
+      const wallet = new Wallet({
+        ...defaultOptions,
+      });
+      assert.equal(wallet.isUnaliasSupported, true);
+    });
+
+    it('should unalias X addresss', async () => {
+      const wallet = new Wallet({
+        ...defaultOptions,
+      });
+
+      const data = await wallet.unalias('X7ojcfux3nstFhZGjJv39sAq19KRiAMmeomkmLDmyTha6wE');
+      assert.equal(data.alias, 'X7ojcfux3nstFhZGjJv39sAq19KRiAMmeomkmLDmyTha6wE');
+      assert.equal(data.address, SECOND_ADDRESS);
+      assert.equal(data.destinationTag, '123');
+    });
+
+    it('should unalias X addresss with tag 0', async () => {
+      const wallet = new Wallet({
+        ...defaultOptions,
+      });
+
+      const data = await wallet.unalias('X7ojcfux3nstFhZGjJv39sAq19KRiAKTp2U2RBwRkMuY6Tn');
+      assert.equal(data.alias, 'X7ojcfux3nstFhZGjJv39sAq19KRiAKTp2U2RBwRkMuY6Tn');
+      assert.equal(data.address, SECOND_ADDRESS);
+      assert.equal(data.destinationTag, '0');
+    });
+
+    it('should unalias X addresss without tag', async () => {
+      const wallet = new Wallet({
+        ...defaultOptions,
+      });
+
+      const data = await wallet.unalias('X7ojcfux3nstFhZGjJv39sAq19KRiANcqHjxj2k7vRFRhH2');
+      assert.equal(data.alias, 'X7ojcfux3nstFhZGjJv39sAq19KRiANcqHjxj2k7vRFRhH2');
+      assert.equal(data.address, SECOND_ADDRESS);
+      assert.equal(data.destinationTag, undefined);
+    });
+
+    it('should do nothing for classic addresss', async () => {
+      const wallet = new Wallet({
+        ...defaultOptions,
+      });
+
+      const data = await wallet.unalias(SECOND_ADDRESS);
+      assert.equal(data, undefined);
     });
   });
 });
