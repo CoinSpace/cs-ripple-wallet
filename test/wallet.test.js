@@ -220,7 +220,7 @@ describe('Ripple Wallet', () => {
       await wallet.open({ data: RANDOM_SEED_PUB_KEY });
       await wallet.load();
       const estimation = await wallet.estimateImport({ privateKey: SECOND_SECRET });
-      assert.equal(estimation.value, 100489999988n);
+      assert.equal(estimation.value, 100498999988n);
     });
 
     it('throw error on invalid private key', async () => {
@@ -270,7 +270,7 @@ describe('Ripple Wallet', () => {
           baseURL: 'node',
           headers: sinon.match.any,
         }).resolves({
-          balance: 10.000000,
+          balance: 1.000000,
           sequence: 1,
           isActive: true,
         })
@@ -327,8 +327,8 @@ describe('Ripple Wallet', () => {
       await wallet.open({ data: RANDOM_SEED_PUB_KEY });
       await wallet.load();
       const maxAmount = await wallet.estimateMaxAmount({ address: SECOND_ADDRESS });
-      // 2345000n - 12n
-      assert.equal(maxAmount.value, 2344988n);
+      // 11345000n - 12n
+      assert.equal(maxAmount.value, 11344988n);
     });
 
     it('should estimate max amount to be 0', async () => {
@@ -340,7 +340,7 @@ describe('Ripple Wallet', () => {
           baseURL: 'node',
           headers: sinon.match.any,
         }).resolves({
-          balance: 10,
+          balance: 1,
           sequence: 1,
           isActive: true,
         }).withArgs({
@@ -590,7 +590,7 @@ describe('Ripple Wallet', () => {
         }, {
           name: 'BigAmountError',
           message: 'Big amount',
-          amount: new Amount(2344988n, wallet.crypto.decimals),
+          amount: new Amount(11344988n, wallet.crypto.decimals),
         });
       });
 
@@ -636,12 +636,12 @@ describe('Ripple Wallet', () => {
         await assert.rejects(async () => {
           await wallet.validateAmount({
             address: SECOND_ADDRESS,
-            amount: new Amount(2_000000n, wallet.crypto.decimals),
+            amount: new Amount(900000n, wallet.crypto.decimals),
           });
         }, {
           name: 'MinimumReserveDestinationError',
           message: 'Less than minimum reserve on destination address',
-          amount: new Amount(10000000n, wallet.crypto.decimals),
+          amount: new Amount(1000000n, wallet.crypto.decimals),
         });
       });
     });
@@ -887,7 +887,7 @@ describe('Ripple Wallet', () => {
       const id = await wallet.createImport({
         privateKey: SECOND_SECRET,
       });
-      assert.equal(wallet.balance.value, 39_999988n);
+      assert.equal(wallet.balance.value, 48_999988n);
       assert.equal(id, '123456');
     });
   });
