@@ -1,4 +1,5 @@
-import assert from 'assert/strict';
+import { Buffer } from 'node:buffer';
+import assert from 'node:assert/strict';
 import {
   getAddressFromSecret,
   getAddressFromSeed,
